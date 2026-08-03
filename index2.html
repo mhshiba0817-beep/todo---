@@ -1,0 +1,223 @@
+
+<!DOCTYPE html>
+   <head>
+      <link rel="stylesheet" href="style.css">
+   </head>
+   
+      <div>
+         <input class="text" placeholder="ここに入力">
+         <button class="btn">表示</button>
+         <button class="reset">削除</button>
+         <div class="filter"></div>
+         <p class="length"></p>
+      </div>
+      <p class="result"></p>
+      <p class="go"></p>
+   <script>
+      const text = document.querySelector(".text");
+      const filter = document.querySelector(".filter");
+      const btn = document.querySelector(".btn");
+      const reset = document.querySelector(".reset");
+      const length = document.querySelector(".length");
+      const result = document.querySelector(".result");
+      const go = document.querySelector(".go");
+
+      let list = [];
+      let mode = "all";
+      //ボタン
+      const allbtn = document.createElement("button");
+      allbtn.textContent = "全部";
+
+      allbtn.addEventListener("click", () => {
+         mode = "all";
+         display();
+      });
+
+      const donebtn = document.createElement("button");
+      donebtn.textContent = "完了";
+       donebtn.addEventListener("click", () => {
+         mode = "done";
+         display();
+      });
+
+      const todobtn = document.createElement("button");
+      todobtn.textContent = "未完了";
+
+       todobtn.addEventListener("click", () => {
+         mode = "todo";
+         display();
+      });
+      filter.appendChild(allbtn);
+      filter.appendChild(donebtn);
+      filter.appendChild(todobtn);
+
+      //データ更新
+      function add(){
+         if(text.value.trim() === ""){
+            return;
+         };
+         list.push({id:Date.now(),text:text.value,done:false});
+         text.value = "";
+      };
+      //表示更新
+      function display(){
+         result.innerHTML = "";
+
+         let filteredList = list;
+         if(mode === "done"){
+            filteredList = list.filter(item => item.done)
+         };
+         if(mode === "todo"){
+            filteredList = list.filter(item => !item.done)
+         };
+
+        
+         filteredList.forEach((item,index) => {
+            const div = document.createElement("div");
+            //div.textContent = item 
+            const span = document.createElement("span");
+            span.textContent =item.text;
+
+            if(item.done){
+               span.classList.add("active");
+            }else{
+               span.classList.remove("active");
+            };
+
+            //個別check・完了
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+
+            checkbox.checked = item.done;
+
+            checkbox.addEventListener("change", () => {
+               item.done = checkbox.checked;
+               display();
+            });
+
+            //編集
+            const edit = document.createElement("button");
+            edit.textContent = "編集"
+
+            edit.addEventListener("click", () => {
+               const newText = prompt("編集してください。");
+               if(newText !== null && newText.trim() !== ""){
+                 item.text = newText.trim();
+                 display();
+               };
+            });
+
+            //個別削除
+            const del = document.createElement("button");
+            del.textContent = "×";
+
+            del.addEventListener("click", () => {
+               if(confirm("本当に削除しますか？")){
+               list = list.filter(l => l.id !== item.id)}   
+                  display();
+            });
+
+            //表示
+            div.appendChild(checkbox);
+            div.appendChild(span);
+            div.appendChild(edit);
+            div.appendChild(del);
+            result.appendChild(div); 
+            //result.innerHTML += item +"<br>";
+         });
+      };   
+
+      text.addEventListener("keydown",(event) => {
+         if(event.key === "Enter"){
+            add();
+            display(); 
+         }; 
+      });
+
+      btn.addEventListener("click", () => {
+         add();
+         display();
+      });
+
+      reset.addEventListener("click", () => {
+         list = [];
+         result.innerHTML = "";
+         text.value = "";
+         length.textContent = "";
+      });
+
+      text.addEventListener("input", () => {
+         length.textContent = text.value.length;
+      });
+
+   </script>
+   </body>
+</html>
+
+const nnn = list.indexOf(item);
+if(nnn !== -1){
+list.splic(nnn,1)}
+let list = [];
+
+function add(){
+   list.push(text.value);
+   text.value = "";
+}
+
+function display(){
+   result.innerHTML = "";
+
+   list.forEach((item) => {
+      result.innerHTML += item + "<br>";
+   });
+}
+
+//データ操作 → プログラムの中身
+//DOM操作 → ブラウザの画面
+//イベント → きっかけ
+//入力操作 → ユーザー入力
+
+ const cards = document.querySelectorAll(".card");
+const counterAll = document.querySelector(".counterAll");
+const reset = document.querySelector(".reset");
+const coun>ters = document.querySelectorAll(".counter");
+
+let count = [0, 0, 0];
+
+// 更新処理（全部ここに集約）
+function update(index, delta = 0, isReset = false) {
+   if (isReset) {
+      count = [0, 0, 0];
+   } else {
+      if (count[index] + delta <= 10 && count[index] + delta >= 0) {
+         count[index] += delta;
+      }
+   }
+
+   // 個別表示更新
+   counters.forEach((el, i) => {
+      el.textContent = count[i];
+   });
+
+   // 合計更新
+   counterAll.textContent = count[0] + count[1] + count[2];
+}
+
+// 各カードにイベント付与
+cards.forEach((card, index) => {
+   const plus = card.querySelector(".plus");
+   const minus = card.querySelector(".minus");
+
+   plus.addEventListener("click", () => {
+      update(index, +1);
+   });
+
+   minus.addEventListener("click", () => {
+      update(index, -1);
+   });
+});
+
+// リセット
+reset.addEventListener("click", () => {
+   update(null, 0, true);
+});
